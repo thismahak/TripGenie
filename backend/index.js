@@ -20,8 +20,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://trip-genie-gamma.vercel.app/'], // allow both dev & deployed frontend
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  origin: ['http://localhost:3000', 'https://trip-genie-gamma.vercel.app'], // allow both dev & deployed frontend
   credentials: true,
 }));
 app.use(express.json());
