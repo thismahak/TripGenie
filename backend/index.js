@@ -20,13 +20,15 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: "https://tripgenie-backend-cmqd.onrender.com/"
+  origin: ['http://localhost:3000', 'https://trip-genie-gamma.vercel.app/'], // allow both dev & deployed frontend
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
 }));
 app.use(express.json());
 
 // Routes
 app.get('/', (req, res) => {
-  res.send('🌍 BorderWise Backend is Running');
+  res.send('🌍 TripGenie Backend is Running');
 });
 
 app.use('/api/auth', authRoutes);
