@@ -26,7 +26,7 @@ export default function PackingForm() {
         activities: form.activities.split(",").map((a) => a.trim()),
       };
 
-      const res = await fetch("https://tripgenie-backend-cmqd.onrender.com/api/packing", {
+      const res = await fetch(`h${process.env.REACT_APP_BACKEND_URL}api/packing`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

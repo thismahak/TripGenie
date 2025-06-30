@@ -19,7 +19,7 @@ export default function DestinationForm() {
     setResult("");
 
     try {
-      const res = await fetch("https://tripgenie-backend-cmqd.onrender.com/api/explore", {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}api/explore`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

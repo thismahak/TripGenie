@@ -12,7 +12,7 @@ export default function Profile() {
 
   const fetchProfile = async () => {
     try {
-      const res = await fetch("https://tripgenie-backend-cmqd.onrender.com/api/profile", {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}api/profile`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

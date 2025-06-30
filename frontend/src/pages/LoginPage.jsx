@@ -14,7 +14,7 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const res = await fetch("https://tripgenie-backend-cmqd.onrender.com/api/auth/login", {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

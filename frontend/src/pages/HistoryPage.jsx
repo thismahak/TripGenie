@@ -16,7 +16,7 @@ export default function History() {
 
   const fetchHistory = async () => {
     try {
-      const res = await fetch("https://tripgenie-backend-cmqd.onrender.com/api/history", {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}api/history`, {
         headers: {
           authorization: `Bearer ${localStorage.getItem("token")}`,
         },
