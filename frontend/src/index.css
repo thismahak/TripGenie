@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* Light mode scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+ 
+}
+::-webkit-scrollbar-thumb {
+   /* green-500 */
+  border-radius: 8px;
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-track {
+  background: #1f2937; /* gray-800 */
+}
+.dark ::-webkit-scrollbar-thumb {
+  background-color: rgb(168, 85, 247); /* green-300 */
+}
