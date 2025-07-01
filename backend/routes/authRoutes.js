@@ -7,12 +7,10 @@ import User from '../models/User.js';
 const router = express.Router();
 
 // POST /api/auth/register
-// POST /api/auth/register
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // Validate input
     if (!name || !email || !password) {
       return res.status(400).json({ error: 'All fields are required' });
     }
@@ -21,31 +19,42 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'Password must be at least 6 characters long' });
     }
 
-    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ error: 'Email already registered' });
     }
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new user
     const newUser = await User.create({
       name,
       email,
       password: hashedPassword,
     });
 
-    res.status(201).json({ message: 'User registered successfully' });
+    // 🔐 Generate token after registration
+    const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, {
+      expiresIn: '7d',
+    });
+
+    // ✅ Return token and user
+    res.status(201).json({
+      message: 'User registered successfully',
+      token,
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+      },
+    });
 
   } catch (err) {
-    console.error("Registration Error:", err); // ✅ Log for debugging
+    console.error("Registration Error:", err);
     res.status(500).json({ error: 'Registration failed' });
   }
 });
 
-// POST /api/auth/login
+
 // POST /api/auth/login
 router.post('/login', async (req, res) => {
   try {
