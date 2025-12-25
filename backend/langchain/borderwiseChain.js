@@ -1,36 +1,25 @@
-import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { RunnableSequence } from "@langchain/core/runnables";
-import dotenv from "dotenv";
-dotenv.config();
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const model = new ChatGoogleGenerativeAI({
-  model: "gemini-pro",
-  apiKey: process.env.GOOGLE_API_KEY,
-  temperature: 0.6,
-  maxOutputTokens: 1024,
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
-  safetySettings: [
-    { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" },
-    { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-    { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-    { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-  ],
+const model = genAI.getGenerativeModel({
+  model: "gemini-1.5-flash", // ✅ WORKS HERE
 });
 
-const prompt = ChatPromptTemplate.fromTemplate(
-  `You are a helpful AI travel assistant.
+export async function getVisaInfo({ nationality, destination, tripType }) {
+  const prompt = `
+You are a helpful AI travel assistant.
 
-A user from {nationality} is planning a {tripType} trip to {destination}.
+A user from ${nationality} is planning a ${tripType} trip to ${destination}.
 
 Reply with:
 1. Do they need a visa?
 2. What type of visa?
-3. Documents usually required
-4. Allowed entry duration
-5. Any warnings or extra tips
+3. Documents required
+4. Allowed stay duration
+5. Warnings or tips
+`;
 
-`
-);
-
-export const visaChain = RunnableSequence.from([prompt, model]);
+  const result = await model.generateContent(prompt);
+  return result.response.text();
+}

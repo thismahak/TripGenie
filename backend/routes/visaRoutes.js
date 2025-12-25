@@ -1,5 +1,5 @@
 import express from "express";
-import { visaChain } from "../langchain/borderwiseChain.js";
+import { getVisaInfo } from "../langchain/borderwiseChain.js";
 import { protect } from "../middleware/authMiddleware.js";
 import TripRequest from "../models/TripRequest.js";
 
@@ -13,24 +13,16 @@ router.post("/", protect, async (req, res) => {
   }
 
   try {
-    const aiResponse = await visaChain.invoke({
+    // ✅ DIRECT Gemini call (NO LangChain)
+    const aiText = await getVisaInfo({
       nationality,
       destination,
       tripType,
     });
 
-    // ✅ SAFE extraction of AI text
-    const aiText =
-      typeof aiResponse === "string"
-        ? aiResponse
-        : aiResponse?.content ||
-          aiResponse?.text ||
-          aiResponse?.kwargs?.content ||
-          JSON.stringify(aiResponse);
-
     // ✅ Save to DB
     const saved = await TripRequest.create({
-      userId: req.user,
+      userId: req.user._id, // IMPORTANT
       nationality,
       destination,
       tripType,
@@ -45,7 +37,7 @@ router.post("/", protect, async (req, res) => {
     });
 
   } catch (err) {
-    console.error("Visa chain error:", err);
+    console.error("Visa AI error:", err);
     res.status(500).json({
       message: "AI failed to respond",
     });
