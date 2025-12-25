@@ -9,7 +9,7 @@ router.post("/", protect, async (req, res) => {
   const { nationality, destination, tripType } = req.body;
 
   if (!nationality || !destination || !tripType) {
-    return res.status(400).json({ error: "Missing input fields" });
+    return res.status(400).json({ message: "Missing input fields" });
   }
 
   try {
@@ -19,24 +19,36 @@ router.post("/", protect, async (req, res) => {
       tripType,
     });
 
-    // Save to DB with only the string content
+    // ✅ SAFE extraction of AI text
+    const aiText =
+      typeof aiResponse === "string"
+        ? aiResponse
+        : aiResponse?.content ||
+          aiResponse?.text ||
+          aiResponse?.kwargs?.content ||
+          JSON.stringify(aiResponse);
+
+    // ✅ Save to DB
     const saved = await TripRequest.create({
       userId: req.user,
       nationality,
       destination,
       tripType,
-      response: aiResponse.content, // ✅ FIXED
+      response: aiText,
       type: "visa",
     });
 
-    res.json({
-      result: aiResponse.content, // ✅ FIXED
+    // ✅ Send response
+    res.status(200).json({
+      result: aiText,
       savedId: saved._id,
     });
 
   } catch (err) {
-    console.error("Visa chain error:", err.message);
-    res.status(500).json({ error: "AI failed to respond" });
+    console.error("Visa chain error:", err);
+    res.status(500).json({
+      message: "AI failed to respond",
+    });
   }
 });
 
