@@ -17,7 +17,7 @@ import rateLimit from 'express-rate-limit'; // ✅ NEW
 dotenv.config();
 
 const app = express();
-
+app.set("trust proxy", 1);
 // Middleware
 app.use(cors({
   origin: ['http://localhost:3000', 'https://trip-genie-gamma.vercel.app'], // allow both dev & deployed frontend
